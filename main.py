@@ -111,101 +111,6 @@ def update():
                 square.isHintSquare = True
                 square.isBlank = False
 
-
-def mark1s():
-    '''
-    for each square open1 go to that square and check if only 
-    one non hint square or marked mine is touching it. Mark that nonhint square 
-    if it hasnt been marked already
-    '''
-    wasAbleToMark = False
-    for _ , square in squares.items():
-        if square.label != "square open1":
-            continue
-
-        # need to see how many of the touching squares are open squares
-        # or are squares that have been flagged. 
-        touchingOpensAndFlags = list()
-        for potentialOpen in square.touchingSquares:
-            if squares[potentialOpen].isBlank or squares[potentialOpen].isFlagged :
-                touchingOpensAndFlags.append(potentialOpen)
-
-        # have found how many open squares are touching the ones
-        # now i need to right click on the square if the len of 
-        # touching opens is one AND the square hasnt already been marked
-        
-        if 1 == len(touchingOpensAndFlags):
-            index = touchingOpensAndFlags[0]
-            if True == squares[index].isFlagged:
-                print(f'skipped clicking {index} because bomb is already flagged')
-                continue
-            else:
-                print(f"right clicking {index} ---")
-                elem = driver.find_element_by_id(f"{index}")
-                actions.context_click(elem).perform()
-                # update the right clicked square in memory
-                rightClickSquare = squares[f"{index}"]
-                rightClickSquare.isFlagged = True
-                rightClickSquare.isBlank = False
-                rightClickSquare.label = "square bombflagged"
-                # update wasAbleToMark so that I can make decisions about whether to restart
-                wasAbleToMark = True
-    if (True == wasAbleToMark):
-        global currentNumber
-        currentNumber = 0
-    return wasAbleToMark
-def mark2s():
-    '''
-    for each square open2 go to that square and check if only 
-    two non hint square or marked mine is touching it. Mark that nonhint square 
-    if it hasnt been marked already
-    '''
-    for _ , square in squares.items():
-        if square.label != "square open2":
-            continue
-
-        # need to see how many of the touching squares are open squares
-        # or are squares that have been flagged. 
-        touchingOpensAndFlags = list()
-        for potentialOpen in square.touchingSquares:
-            if squares[potentialOpen].isBlank or squares[potentialOpen].isFlagged :
-                touchingOpensAndFlags.append(potentialOpen)
-
-        # have found how many open squares are touching the twos
-        # now i need to right click on the square if the len of 
-        # touching opens is one AND the square hasnt already been marked
-        
-        if 2 == len(touchingOpensAndFlags):
-            index1 = touchingOpensAndFlags[0]
-            index2 = touchingOpensAndFlags[1]
-            if True == squares[index1].isFlagged and True ==squares[index2].isFlagged:
-                print(f'skipped clicking {index1} and {index2} because bomb is already flagged')
-                continue
-            else:
-                print(f"right clicking {index1} and {index2} ---")
-
-                elem = driver.find_element_by_id(f"{index1}")
-                actions.context_click(elem).perform()
-                # update the right clicked square in memory
-                rightClickSquare = squares[f"{index1}"]
-                rightClickSquare.isFlagged = True
-                rightClickSquare.isBlank = False
-                rightClickSquare.label = "square bombflagged"
-
-                elem = driver.find_element_by_id(f"{index2}")
-                actions.context_click(elem).perform()
-                # update the right clicked square in memory
-                rightClickSquare = squares[f"{index2}"]
-                rightClickSquare.isFlagged = True
-                rightClickSquare.isBlank = False
-                rightClickSquare.label = "square bombflagged"
-                wasAbleToMark = True
-    
-    if (True == wasAbleToMark):
-        global currentNumber
-        currentNumber = 0
-    return wasAbleToMark
-
 def allBlanksOrFlags(indexList):
     '''
     True: all indexs in this list are blank or Flagged
@@ -302,21 +207,6 @@ def clickXs(label):
             print(f"clicking {label} number of bombs at {square.id}")
             clickSquares(squares, square)
             continue
-
-   
-'''
-begin
-    update squares
-click 1s
-    if successful go to begin
-click 2s
-    if successful go to begin
-mark 1s
-    if successful go to begin
-mark 2s
-    if succesful go to begin
-
-'''
 
 for x in range(20):
     print(f"beggining iteration {x}")
